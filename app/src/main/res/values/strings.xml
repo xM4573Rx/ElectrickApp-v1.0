@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">ElectrickApp</string>
+    <string name="disp_vinc">DISPOSITIVOS VINCULADOS</string>
+    <string name="consumo_total">Consumo total</string>
+    <string name="dia_anterior">Hora anterior</string>
+</resources>
