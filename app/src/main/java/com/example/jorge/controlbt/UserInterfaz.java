@@ -196,8 +196,8 @@ public class UserInterfaz extends AppCompatActivity {
 
         int datacost = preferences.getInt("COST", 0);
         Adapter.AddFragmentPage(newInstance(datacost)); //newInstance(cost));
-        Adapter.AddFragmentPage(new OneFragment());
-        Adapter.AddFragmentPage(new OneFragment());
+        Adapter.AddFragmentPage(new TwoFragment());
+        Adapter.AddFragmentPage(new ThreeFragment());
         //We Need Fragment class now
         viewpage.setAdapter(Adapter);
     }
