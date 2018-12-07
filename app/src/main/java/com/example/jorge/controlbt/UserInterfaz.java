@@ -3,7 +3,9 @@ package com.example.jorge.controlbt;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -13,8 +15,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +29,11 @@ import java.util.UUID;
 public class UserInterfaz extends AppCompatActivity {
 
     //1)
+    public static final String DATO_KEY = "DATO";
+    public String Dato;
+    public String WattHora;
+    public int cost;
+
     TabLayout MyTabs;
     ViewPager MyPage;
 
@@ -98,21 +103,6 @@ public class UserInterfaz extends AppCompatActivity {
         }
     }
 
-    public void SetUpViewPager (ViewPager viewpage){
-        MyViewPageAdapter Adapter = new MyViewPageAdapter(getSupportFragmentManager());
-
-        Adapter.AddFragmentPage(new OneFragment());
-        Adapter.AddFragmentPage(new OneFragment());
-        Adapter.AddFragmentPage(new OneFragment());
-        //We Need Fragment class now
-        viewpage.setAdapter(Adapter);
-    }
-
-    /*private OneFragment newInstance() {
-        Bundle bundle = new Bundle();
-
-    }*/
-
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException
     {
         //crea un conexion de salida segura para el dispositivo
@@ -153,13 +143,12 @@ public class UserInterfaz extends AppCompatActivity {
             public void handleMessage(android.os.Message msg) {
                 if (msg.what == handlerState) {
 
-                    String Dato;
-                    String WattHora;
+                    //String Dato;
+                    //String WattHora;
                     String readMessage = (String) msg.obj;
                     DataStringIN.append(readMessage);
 
                     int StartOfLineIndex = DataStringIN.indexOf("[");
-
 
                     if ((StartOfLineIndex > -1) ) {
 
@@ -171,7 +160,8 @@ public class UserInterfaz extends AppCompatActivity {
                                 WattHora = Dato.substring(Dato.indexOf("#") + 1, Dato.indexOf("*"));
                                 double wattactual = Float.valueOf(WattHora)* 0.001;
                                 double costwatt = 466.14;
-                                double cost = wattactual * costwatt ;
+                                //cost = wattactual * costwatt;
+                                cost = 12;
                                 String costtext = String.valueOf(new DecimalFormat("##.##").format(cost));
                                 watts.setText(Dato.substring(0, Dato.indexOf("#")));//<-<- PARTE A MODIFICAR >->->
                                 tv2.setText(new DecimalFormat("##.###").format(wattactual) + " KWh");
@@ -185,13 +175,41 @@ public class UserInterfaz extends AppCompatActivity {
                             EndOfLineIndex = -1;
                             DataStringIN.delete(0, DataStringIN.length());
                         }
-
-
-
                     }
                 }
+                //Toast.makeText(UserInterfaz.this, "Cost es: " + cost, Toast.LENGTH_SHORT).show();
+                SharedPreferences preferencias = getSharedPreferences("dato1", Context.MODE_PRIVATE);
+                SharedPreferences.Editor Obj_editor = preferencias.edit();
+                Obj_editor.putInt("COST", cost);
+                Obj_editor.commit();
             }
         };
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    private OneFragment newInstance(int transfer) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(DATO_KEY, transfer);
+        OneFragment fragment = new OneFragment();
+        fragment.setArguments(bundle);
+
+        return fragment;
+    }
+
+    public void SetUpViewPager (ViewPager viewpage){
+        MyViewPageAdapter Adapter = new MyViewPageAdapter(getSupportFragmentManager());
+
+        SharedPreferences preferences = getSharedPreferences("dato1", Context.MODE_PRIVATE);
+
+        int datacost = preferences.getInt("COST", 0);
+        Adapter.AddFragmentPage(newInstance(datacost)); //newInstance(cost));
+        Adapter.AddFragmentPage(new OneFragment());
+        Adapter.AddFragmentPage(new OneFragment());
+        //We Need Fragment class now
+        viewpage.setAdapter(Adapter);
     }
 
     @Override
