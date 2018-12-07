@@ -32,13 +32,12 @@ public class UserInterfaz extends AppCompatActivity {
     public static final String DATO_KEY = "DATO";
     public String Dato;
     public String WattHora;
+    public String costtext;
     public int cost;
 
     TabLayout MyTabs;
     ViewPager MyPage;
 
-    TextView watts;
-    TextView tv1, tv2, tv3;
     //-------------------------------------------
     Handler bluetoothIn;
     final int handlerState = 0;
@@ -62,11 +61,6 @@ public class UserInterfaz extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         MyTabs = (TabLayout)findViewById(R.id.MyTabs);
         MyPage = (ViewPager)findViewById(R.id.MyPage);
-
-        watts = (TextView) findViewById(R.id.IdBufferIn);
-        tv1 = (TextView) findViewById(R.id.txt_precio_watt);
-        tv2 = (TextView) findViewById(R.id.textView2);
-        tv3 = (TextView) findViewById(R.id.textView7);
 
         btAdapter = BluetoothAdapter.getDefaultAdapter(); // get Bluetooth adapter
         VerificarEstadoBT();
@@ -161,11 +155,11 @@ public class UserInterfaz extends AppCompatActivity {
                                 double wattactual = Float.valueOf(WattHora)* 0.001;
                                 double costwatt = 466.14;
                                 //cost = wattactual * costwatt;
-                                cost = 12;
-                                String costtext = String.valueOf(new DecimalFormat("##.##").format(cost));
-                                watts.setText(Dato.substring(0, Dato.indexOf("#")));//<-<- PARTE A MODIFICAR >->->
+                                cost = 122;
+                                costtext = String.valueOf(new DecimalFormat("##.##").format(cost));
+                                /*watts.setText(Dato.substring(0, Dato.indexOf("#")));//<-<- PARTE A MODIFICAR >->->
                                 tv2.setText(new DecimalFormat("##.###").format(wattactual) + " KWh");
-                                tv3.setText("$ " + costtext);
+                                tv3.setText("$ " + costtext);*/
 
                             }else{
                                 Toast.makeText(UserInterfaz.this,"MODULO SIN ALIMENTACION", Toast.LENGTH_SHORT).show();
@@ -184,10 +178,6 @@ public class UserInterfaz extends AppCompatActivity {
                 Obj_editor.commit();
             }
         };
-    }
-
-    public double getCost() {
-        return cost;
     }
 
     private OneFragment newInstance(int transfer) {
