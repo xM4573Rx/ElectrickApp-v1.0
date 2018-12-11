@@ -8,40 +8,34 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class OneFragment extends Fragment {
 
-    private String Dato;
-    private int cost;
+    private String Cost;
+    private String Actualwatt;
+    private String Watts;
 
     TextView watts;
     TextView tv1, tv2, tv3;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
-    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View PageOne = inflater.inflate(R.layout.fragment_one, container, false);
 
-        watts = (TextView) PageOne.findViewById(R.id.IdBufferIn);
-        tv1 = (TextView) PageOne.findViewById(R.id.txt_precio_watt);
+        tv1 = (TextView) PageOne.findViewById(R.id.IdBufferIn);
         tv2 = (TextView) PageOne.findViewById(R.id.textView2);
         tv3 = (TextView) PageOne.findViewById(R.id.textView7);
 
         if (getArguments() != null) {
-            Dato = this.getArguments().getString(UserInterfaz.DATO_KEY);
-            cost = this.getArguments().getInt(UserInterfaz.DATO_KEY);
+            Watts = this.getArguments().getString(UserInterfaz.DATO_KEY);
+            Cost = this.getArguments().getString(UserInterfaz.DATO_KEY1);
+            Actualwatt = this.getArguments().getString(UserInterfaz.DATO_KEY2);
         }
 
-        Toast.makeText(getContext(), "El string es: " + Dato, Toast.LENGTH_SHORT).show();
-        tv3.setText("$ " + cost);
+        tv1.setText(Watts);
+        tv2.setText(Actualwatt + " KWh");
+        tv3.setText("$ " + Cost);
 
         return PageOne;
     }

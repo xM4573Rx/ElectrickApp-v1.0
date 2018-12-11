@@ -30,10 +30,20 @@ public class UserInterfaz extends AppCompatActivity {
 
     //1)
     public static final String DATO_KEY = "DATO";
+    public static final String DATO_KEY1 = "DATO1";
+    public static final String DATO_KEY2 = "DATO2";
     public String Dato;
     public String WattHora;
-    public String costtext;
-    public int cost;
+    public String ActualWatt;
+    public String Costtext;
+    public String Watts;
+
+    public double cost;
+    public double wattactual;
+    public double costwatt;
+
+    public int Hello;
+    public String Prueba;
 
     TabLayout MyTabs;
     ViewPager MyPage;
@@ -151,15 +161,14 @@ public class UserInterfaz extends AppCompatActivity {
                             Dato=DataStringIN.substring(StartOfLineIndex+1, EndOfLineIndex);//<-<- PARTE A MODIFICAR >->->
                             if(!(Dato.length()<=9)) {
 
+                                Watts = Dato.substring(0, Dato.indexOf("#"));
                                 WattHora = Dato.substring(Dato.indexOf("#") + 1, Dato.indexOf("*"));
-                                double wattactual = Float.valueOf(WattHora)* 0.001;
-                                double costwatt = 466.14;
-                                //cost = wattactual * costwatt;
-                                cost = 122;
-                                costtext = String.valueOf(new DecimalFormat("##.##").format(cost));
-                                /*watts.setText(Dato.substring(0, Dato.indexOf("#")));//<-<- PARTE A MODIFICAR >->->
-                                tv2.setText(new DecimalFormat("##.###").format(wattactual) + " KWh");
-                                tv3.setText("$ " + costtext);*/
+                                wattactual = Float.valueOf(WattHora)* 0.001;
+                                costwatt = 466.14;
+                                cost = wattactual * costwatt;
+                                Costtext = String.valueOf(new DecimalFormat("##.##").format(cost));
+                                ActualWatt = String.valueOf(new DecimalFormat("##.###").format(wattactual));
+                                /*watts.setText(Dato.substring(0, Dato.indexOf("#")));*/
 
                             }else{
                                 Toast.makeText(UserInterfaz.this,"MODULO SIN ALIMENTACION", Toast.LENGTH_SHORT).show();
@@ -171,18 +180,29 @@ public class UserInterfaz extends AppCompatActivity {
                         }
                     }
                 }
-                //Toast.makeText(UserInterfaz.this, "Cost es: " + cost, Toast.LENGTH_SHORT).show();
-                SharedPreferences preferencias = getSharedPreferences("dato1", Context.MODE_PRIVATE);
+                SharedPreferences preferencias = getSharedPreferences("dato", Context.MODE_PRIVATE);
                 SharedPreferences.Editor Obj_editor = preferencias.edit();
-                Obj_editor.putInt("COST", cost);
+                Obj_editor.putString("DATO", Watts);
                 Obj_editor.commit();
+
+                SharedPreferences preferencias1 = getSharedPreferences("dato1", Context.MODE_PRIVATE);
+                SharedPreferences.Editor Obj_editor1 = preferencias1.edit();
+                Obj_editor1.putString("DATO1", ActualWatt);
+                Obj_editor1.commit();
+
+                SharedPreferences preferencias2 = getSharedPreferences("dato2", Context.MODE_PRIVATE);
+                SharedPreferences.Editor Obj_editor2 = preferencias2.edit();
+                Obj_editor2.putString("PRUEB", Costtext);
+                Obj_editor2.commit();
             }
         };
     }
 
-    private OneFragment newInstance(int transfer) {
+    private OneFragment newInstance2(String transfer, String transfer1, String transfer2) {
         Bundle bundle = new Bundle();
-        bundle.putInt(DATO_KEY, transfer);
+        bundle.putString(DATO_KEY, transfer);
+        bundle.putString(DATO_KEY1, transfer1);
+        bundle.putString(DATO_KEY2, transfer2);
         OneFragment fragment = new OneFragment();
         fragment.setArguments(bundle);
 
@@ -192,10 +212,16 @@ public class UserInterfaz extends AppCompatActivity {
     public void SetUpViewPager (ViewPager viewpage){
         MyViewPageAdapter Adapter = new MyViewPageAdapter(getSupportFragmentManager());
 
-        SharedPreferences preferences = getSharedPreferences("dato1", Context.MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences("dato", Context.MODE_PRIVATE);
+        String watts = preferences.getString("DATO", "0");
 
-        int datacost = preferences.getInt("COST", 0);
-        Adapter.AddFragmentPage(newInstance(datacost)); //newInstance(cost));
+        SharedPreferences preferences1 = getSharedPreferences("dato1", Context.MODE_PRIVATE);
+        String actualwatt = preferences1.getString("DATO1", "0");
+
+        SharedPreferences preferences2 = getSharedPreferences("dato2", Context.MODE_PRIVATE);
+        String costtext = preferences2.getString("PRUEB", "0");
+
+        Adapter.AddFragmentPage(newInstance2(watts, costtext, actualwatt));
         Adapter.AddFragmentPage(new TwoFragment());
         Adapter.AddFragmentPage(new ThreeFragment());
         //We Need Fragment class now
